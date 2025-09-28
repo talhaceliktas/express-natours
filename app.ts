@@ -97,6 +97,25 @@ app.patch(`${API_PREFIX}tours/:id`, (req, res) => {
   });
 });
 
+app.delete(`${API_PREFIX}tours/:id`, (req, res) => {
+  const index = tours.findIndex((tour: Tour) => tour.id === +req.params.id);
+
+  if (index === -1)
+    return res.status(404).json({ status: "fail", message: "Tour not found" });
+
+  tours.splice(index, 1);
+
+  fs.writeFileSync(
+    `${__dirname}/dev-data/data/tours-simple.json`,
+    JSON.stringify(tours)
+  ); // Its blocking system but it's a small app.
+
+  res.status(200).json({
+    status: "success",
+    message: "Tour was successfully deleted.",
+  });
+});
+
 const port = 3000;
 app.listen(port, () => {
   console.log(`App running on port ${port}...`);
