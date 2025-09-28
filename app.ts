@@ -1,5 +1,6 @@
 import express from "express";
 import fs from "fs";
+import morgan from "morgan";
 
 import path from "path";
 import { fileURLToPath } from "url";
@@ -13,11 +14,23 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const API_PREFIX = "/api/v1/";
 
+// 1) MIDDLEWARES
+
 app.use(express.json());
+
+app.use(morgan("dev"));
+
+app.use((req, res, next) => {
+  // req.requestTime = new Date().toISOString();
+  next();
+});
 
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`, "utf-8")
 );
+
+//
+// 2) ROUTE HANDLERS
 
 const getAllTours = (req: Request, res: Response) => {
   res.status(200).json({
@@ -30,12 +43,10 @@ const getAllTours = (req: Request, res: Response) => {
 };
 
 const getTour = (req: Request, res: Response) => {
-  console.log(req.params);
-
   const tour = tours.find((el: Tour) => el.id === Number(req.params.id));
 
   if (!tour)
-    res.status(404).json({
+    return res.status(404).json({
       status: "fail",
       message: "Invalid ID",
     });
@@ -124,12 +135,16 @@ const deleteTour = (req: Request<{ id: string }>, res: Response) => {
 // app.patch(`${API_PREFIX}tours/:id`, updateTour);
 // app.delete(`${API_PREFIX}tours/:id`, deleteTour);
 
+// 3) ROUTES
+
 app.route(`${API_PREFIX}tours`).get(getAllTours).post(createTour);
 app
   .route(`${API_PREFIX}tours/:id`)
   .get(getTour)
   .patch(updateTour)
   .delete(deleteTour);
+
+// 4) START SERVER
 
 const port = 3000;
 app.listen(port, () => {
