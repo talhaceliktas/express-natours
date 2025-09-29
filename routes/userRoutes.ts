@@ -1,42 +1,13 @@
 import express from "express";
-import type { Request, Response } from "express";
+import {
+  createUser,
+  deleteUser,
+  getAllUsers,
+  getUser,
+  updateUser,
+} from "../controllers/userController.js";
 
 const router = express.Router();
-
-const getAllUsers = (req: Request, res: Response) => {
-  res.status(500).json({
-    status: "error",
-    message: "This route is not yet defined!",
-  });
-};
-
-const createUser = (req: Request, res: Response) => {
-  res.status(500).json({
-    status: "error",
-    message: "This route is not yet defined!",
-  });
-};
-
-const getUser = (req: Request, res: Response) => {
-  res.status(500).json({
-    status: "error",
-    message: "This route is not yet defined!",
-  });
-};
-
-const updateUser = (req: Request, res: Response) => {
-  res.status(500).json({
-    status: "error",
-    message: "This route is not yet defined!",
-  });
-};
-
-const deleteUser = (req: Request, res: Response) => {
-  res.status(500).json({
-    status: "error",
-    message: "This route is not yet defined!",
-  });
-};
 
 router.route("/").get(getAllUsers).post(createUser);
 
