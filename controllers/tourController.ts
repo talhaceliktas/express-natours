@@ -20,6 +20,7 @@ const getAllTours = (req: Request, res: Response) => {
     },
   });
 };
+
 const getTour = (req: Request, res: Response) => {
   const tour = tours.find((el: Tour) => el.id === Number(req.params.id));
 
@@ -43,8 +44,10 @@ const createTour = (req: Request, res: Response) => {
 
   tours.push(newTour);
 
+  console.log(__dirname);
+
   fs.writeFile(
-    `${__dirname}/dev-data/data/tours-simple.json`,
+    `${__dirname}/../dev-data/data/tours-simple.json`,
     JSON.stringify(tours),
     () => {
       res.status(201).json({
@@ -96,7 +99,7 @@ const deleteTour = (req: Request<{ id: string }>, res: Response) => {
   tours.splice(index, 1);
 
   fs.writeFileSync(
-    `${__dirname}/dev-data/data/tours-simple.json`,
+    `${__dirname}/../dev-data/data/tours-simple.json`,
     JSON.stringify(tours)
   ); // Its blocking system but it's a small app.
 
