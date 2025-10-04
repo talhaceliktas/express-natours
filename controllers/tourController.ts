@@ -1,5 +1,5 @@
 import fs from "fs";
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import type { Tour } from "../types.js";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -10,6 +10,31 @@ const __dirname = path.dirname(__filename);
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`, "utf-8")
 );
+
+export const checkId = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+  val: string
+) => {
+  console.log(`Tour id is: ${val}`);
+
+  const index = tours.findIndex((tour: Tour) => tour.id === +val);
+
+  if (index === -1)
+    return res.status(404).json({ status: "fail", message: "Tour not found" });
+
+  next();
+};
+
+export const checkBody = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.body?.name || !req.body?.price)
+    return res.status(400).json({
+      status: "fail",
+      message: "Invalid name or price property",
+    });
+  next();
+};
 
 const getAllTours = (req: Request, res: Response) => {
   res.status(200).json({
@@ -23,12 +48,6 @@ const getAllTours = (req: Request, res: Response) => {
 
 const getTour = (req: Request, res: Response) => {
   const tour = tours.find((el: Tour) => el.id === Number(req.params.id));
-
-  if (!tour)
-    return res.status(404).json({
-      status: "fail",
-      message: "Invalid ID",
-    });
 
   res.status(200).json({
     status: "success",
@@ -63,12 +82,6 @@ const createTour = (req: Request, res: Response) => {
 const updateTour = (req: Request<{ id: string }>, res: Response) => {
   const tour = tours.find((tour: Tour) => tour.id === +req.params.id);
 
-  if (!tour)
-    res.status(404).json({
-      status: "fail",
-      message: "Invalid ID",
-    });
-
   if (!req.body)
     res.status(400).json({
       status: "fail",
@@ -92,10 +105,6 @@ const updateTour = (req: Request<{ id: string }>, res: Response) => {
 
 const deleteTour = (req: Request<{ id: string }>, res: Response) => {
   const index = tours.findIndex((tour: Tour) => tour.id === +req.params.id);
-
-  if (index === -1)
-    return res.status(404).json({ status: "fail", message: "Tour not found" });
-
   tours.splice(index, 1);
 
   fs.writeFileSync(
