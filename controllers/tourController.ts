@@ -3,10 +3,28 @@ import Tour from "../models/tourModel.js";
 
 const getAllTours = async (req: Request, res: Response) => {
   try {
-    const tours = await Tour.find();
+    // Build Query
+    const queryObj = { ...req.query };
+    const excludedFields = ["page", "sort", "limit", "fields"];
+    excludedFields.forEach((element) => delete queryObj[element]);
 
+    console.log(req.query, queryObj);
+
+    const query = Tour.find(queryObj);
+
+    // const tours = await Tour.find()
+    //   .where("duration")
+    //   .equals(5)
+    //   .where("difficulty")
+    //   .equals("easy");
+
+    // Execute query
+    const tours = await query;
+
+    // Send Response
     res.status(200).json({
       status: "success",
+      results: tours.length,
       data: {
         tours,
       },
