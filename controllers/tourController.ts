@@ -19,13 +19,22 @@ const getAllTours = async (req: Request, res: Response) => {
   }
 };
 
-const getTour = (req: Request, res: Response) => {
-  res.status(200).json({
-    status: "success",
-    // data: {
-    //   tour,
-    // },
-  });
+const getTour = async (req: Request, res: Response) => {
+  try {
+    const tour = await Tour.findById(req.params.id);
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        tour,
+      },
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: "fail",
+      message: err,
+    });
+  }
 };
 
 const createTour = async (req: Request, res: Response) => {
@@ -49,20 +58,41 @@ const createTour = async (req: Request, res: Response) => {
   }
 };
 
-const updateTour = (req: Request<{ id: string }>, res: Response) => {
-  res.status(200).json({
-    status: "success",
-    data: {
-      // tour,
-    },
-  });
+const updateTour = async (req: Request, res: Response) => {
+  try {
+    const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        tour,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "fail",
+      message: "Invalid data sent!",
+    });
+  }
 };
 
-const deleteTour = (req: Request<{ id: string }>, res: Response) => {
-  res.status(200).json({
-    status: "success",
-    message: "Tour was successfully deleted.",
-  });
+const deleteTour = async (req: Request<{ id: string }>, res: Response) => {
+  try {
+    await Tour.findByIdAndDelete(req.params.id);
+
+    res.status(204).json({
+      status: "success",
+      message: "Tour was successfully deleted.",
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "fail",
+      message: err,
+    });
+  }
 };
 
 export { getAllTours, getTour, createTour, updateTour, deleteTour };
