@@ -3,11 +3,7 @@ import morgan from "morgan";
 import tourRouter from "./routes/tourRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = import.meta.dirname;
 
 import dotenv from "dotenv";
 dotenv.config({ path: "./config.env" });
