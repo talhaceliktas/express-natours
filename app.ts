@@ -16,6 +16,7 @@ if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
+app.set("query parser", "extended");
 
 app.use(`${API_PREFIX}tours`, tourRouter);
 app.use(`${API_PREFIX}users`, userRouter);
