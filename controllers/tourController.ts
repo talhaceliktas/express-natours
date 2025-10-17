@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import Tour from "../models/tourModel.js";
+import APIFeatures from "../utils/apiFeatures.js";
 
 export const aliasTopTours = (
   req: Request,
@@ -22,64 +23,12 @@ export const aliasTopTours = (
 
 const getAllTours = async (req: Request, res: Response) => {
   try {
-    // 1A) Filtering
-    const queryObj = { ...req.query };
-    const excludedFields = ["page", "sort", "limit", "fields"];
-    excludedFields.forEach((element) => delete queryObj[element]);
-
-    // 1B) Advanced Filtering
-    let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-
-    let query = Tour.find(JSON.parse(queryStr));
-
-    // 2) Sorting
-    if (req.query.sort) {
-      const sortBy =
-        typeof req.query.sort === "string"
-          ? req.query.sort.split(",").join(" ")
-          : "";
-      console.log(sortBy);
-      query = query.sort(sortBy);
-    } else {
-      query = query.sort("-createdAt");
-    }
-
-    // 3) Field Limiting
-    if (req.query.fields) {
-      const fields =
-        typeof req.query.fields === "string"
-          ? req.query.fields.split(",").join(" ")
-          : "";
-      query.select(fields);
-    } else {
-      query.select("-__v");
-    }
-
-    // 4) Pagination
-
-    let page = 0;
-    let limit = 0;
-
-    console.log(req.query);
-    if (req.query?.page) {
-      page = +req.query.page;
-    }
-    if (req.query?.limit) {
-      limit = +req.query.limit;
-    }
-
-    const skip = page && limit ? limit * (page - 1) : 0;
-
-    query = query.skip(skip).limit(limit);
-
-    if (req.query.page) {
-      const numTours = await Tour.countDocuments();
-      if (skip >= numTours) throw new Error("This page does not exist!");
-    }
-
-    // Execute query
-    const tours = await query;
+    const features = new APIFeatures(Tour.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+    const tours = await features.query;
 
     // Send Response
     res.status(200).json({
