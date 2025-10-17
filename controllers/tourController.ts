@@ -1,5 +1,24 @@
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import Tour from "../models/tourModel.js";
+
+export const aliasTopTours = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // Make req.query writable (Express sets it as a getter by default)
+  Object.defineProperty(req, "query", {
+    ...Object.getOwnPropertyDescriptor(req, "query"),
+    value: req.query,
+    writable: true,
+  });
+
+  req.query.limit = "5";
+  req.query.page = "1";
+  req.query.sort = "-ratingsAverage,price";
+  req.query.fields = "name,price,ratingsAverage,summary,difficulty";
+  next();
+};
 
 const getAllTours = async (req: Request, res: Response) => {
   try {
@@ -38,9 +57,19 @@ const getAllTours = async (req: Request, res: Response) => {
     }
 
     // 4) Pagination
-    const page = Number(req.query.page ?? 1);
-    const limit = Number(req.query.limit ?? 1);
-    const skip = limit * (page - 1);
+
+    let page = 0;
+    let limit = 0;
+
+    console.log(req.query);
+    if (req.query?.page) {
+      page = +req.query.page;
+    }
+    if (req.query?.limit) {
+      limit = +req.query.limit;
+    }
+
+    const skip = page && limit ? limit * (page - 1) : 0;
 
     query = query.skip(skip).limit(limit);
 
