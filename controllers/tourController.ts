@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
-import Tour from "../models/tourModel.js";
-import APIFeatures from "../utils/apiFeatures.js";
+import Tour from "../models/tourModel.ts";
+import APIFeatures from "../utils/apiFeatures.ts";
 
 export const aliasTopTours = (
   req: Request,

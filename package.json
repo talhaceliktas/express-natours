@@ -2,12 +2,13 @@
   "name": "express-natours",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.ts",
   "type": "module",
   "scripts": {
     "dev": "nodemon",
     "prod": "NODE_ENV=production nodemon",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "ndb server.ts"
   },
   "keywords": [],
   "author": "",
@@ -17,8 +18,10 @@
     "@types/morgan": "^1.9.10",
     "@types/node": "^24.5.2",
     "@types/validator": "^13.15.3",
+    "ndb": "^1.1.5",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "tsx": "^4.20.6",
     "typescript": "^5.9.2"
   },
