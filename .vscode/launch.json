@@ -1,13 +1,10 @@
 {
-  // Use IntelliSense to learn about possible attributes.
-  // Hover to view descriptions of existing attributes.
-  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
     {
       "type": "node",
       "request": "launch",
-      "name": "Debug Typescript",
+      "name": "Debug App - Dev",
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/server.ts",
       "runtimeArgs": [
@@ -18,6 +15,24 @@
       ],
       "console": "integratedTerminal",
       "outFiles": ["${workspaceFolder}/**/*.js"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug App - Prod",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/server.ts",
+      "runtimeArgs": [
+        "-r",
+        "ts-node/register",
+        "-r",
+        "tsconfig-paths/register"
+      ],
+      "console": "integratedTerminal",
+      "outFiles": ["${workspaceFolder}/**/*.js"],
+      "env": {
+        "NODE_ENV": "production"
+      }
     }
   ]
 }
