@@ -8,12 +8,11 @@ const __dirname = import.meta.dirname;
 
 import dotenv from "dotenv";
 import AppError from "./utils/appError.ts";
-dotenv.config({ path: "./config.env" });
+dotenv.config({ path: "./config.env", quiet: true });
 
 const app = express();
 const API_PREFIX = "/api/v1/";
 
-console.log(process.env.NODE_ENV);
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 
 app.use(express.json());
