@@ -6,11 +6,12 @@ import {
   getUser,
   updateUser,
 } from "../controllers/userController.ts";
-import { signUp } from "../controllers/authController.ts";
+import { login, signUp } from "../controllers/authController.ts";
 
 const router = express.Router();
 
 router.post("/signup", signUp);
+router.post("/login", login);
 
 router.route("/").get(getAllUsers).post(createUser);
 

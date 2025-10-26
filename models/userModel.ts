@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please provide your password"],
     minlength: 8,
+    select: false,
   },
   passwordConfirm: {
     type: String,
@@ -47,5 +48,12 @@ userSchema.pre("save", async function (next) {
 
   next();
 });
+
+userSchema.methods.correctPassword = async function (
+  candidatePassword: string,
+  userPassword: string
+) {
+  return await argon2.verify(userPassword, candidatePassword);
+};
 
 export default mongoose.model("User", userSchema);
